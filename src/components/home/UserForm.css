@@ -1,0 +1,15 @@
+.user-form {
+  margin: 50px 0;
+}
+
+.submit {
+  position: absolute;
+  right: 0;
+  bottom: 15px;
+}
+
+.random {
+  position: absolute;
+  right: 110px;
+  bottom: 15px;
+}

@@ -1,0 +1,40 @@
+.user-lists {
+  margin: 50px 0;
+}
+
+/* What you need: */
+table td,
+table th {
+  white-space: nowrap;
+}
+
+table th p {
+  text-transform: uppercase;
+}
+
+table td a {
+  text-transform: uppercase;
+  padding: 0 5px;
+}
+
+table td p {
+  text-transform: capitalize;
+}
+
+.quantity .title {
+  color: #757575;
+}
+
+.quantity .button {
+  margin: 0 10px;
+}
+
+.delete-all {
+  position: absolute;
+  left: 110px;
+  top: 0;
+}
+
+div.item {
+  cursor: pointer;
+}
