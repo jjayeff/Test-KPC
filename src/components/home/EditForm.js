@@ -485,6 +485,7 @@ export class EditForm extends Component {
                 component={this.renderInput}
                 label="-"
                 keyState="phoneEnd"
+                type="number"
                 stateValue={this.state.phoneEnd}
               />
             </div>
