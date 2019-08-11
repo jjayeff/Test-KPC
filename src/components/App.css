@@ -6,6 +6,7 @@
 
 body {
   background: #f5f5f5;
+  min-width: 650px;
 }
 
 .ui.form .inline.fields .field > .selection.dropdown {
