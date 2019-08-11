@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, reset } from 'redux-form';
+import { Flag } from 'semantic-ui-react';
 import moment from 'moment';
 import faker from 'faker';
 import DatePicker from '../core/Datapicker';
@@ -9,7 +10,11 @@ import './UserForm.css';
 
 export class EditForm extends Component {
   state = {
-    citizanId: '',
+    citizanId1: '',
+    citizanId2: '',
+    citizanId3: '',
+    citizanId4: '',
+    citizanId5: '',
     firstName: '',
     gender: '',
     lastName: '',
@@ -25,7 +30,11 @@ export class EditForm extends Component {
 
   setDefaultState() {
     this.setState({
-      citizanId: '',
+      citizanId1: '',
+      citizanId2: '',
+      citizanId3: '',
+      citizanId4: '',
+      citizanId5: '',
       firstName: '',
       gender: '',
       lastName: '',
@@ -45,12 +54,43 @@ export class EditForm extends Component {
 
   componentDidMount() {
     this.setDefaultState();
+    var container = this.refs.Progress1;
+    container.onkeyup = e => {
+      var target = e.srcElement;
+      var maxLength = parseInt(target.attributes['maxlength'].value, 10);
+      var myLength = target.value.length;
+      if (myLength >= maxLength) {
+        var next = target;
+        while ((next = next.parentNode.parentNode.nextElementSibling)) {
+          if (next == null) break;
+          if (
+            next.childNodes[1].childNodes[0].tagName.toLowerCase() === 'input'
+          ) {
+            next.childNodes[1].childNodes[0].focus();
+            break;
+          }
+        }
+      }
+    };
   }
+
+  maxLengthCheck = object => {
+    if (object.target.value.length > object.target.maxLength) {
+      object.target.value = object.target.value.slice(
+        0,
+        object.target.maxLength
+      );
+    }
+  };
 
   componentDidUpdate() {
     if (this.props.user && !this.state.isEdit) {
       this.setState({
-        citizanId: this.props.user.citizanId,
+        citizanId1: this.props.user.citizanId1,
+        citizanId2: this.props.user.citizanId2,
+        citizanId3: this.props.user.citizanId3,
+        citizanId4: this.props.user.citizanId4,
+        citizanId5: this.props.user.citizanId5,
         firstName: this.props.user.firstName,
         gender: this.props.user.gender,
         lastName: this.props.user.lastName,
@@ -63,7 +103,11 @@ export class EditForm extends Component {
         dob: new Date(this.props.user.dob)
       });
       this.props.initialize({
-        citizanId: this.props.user.citizanId,
+        citizanId1: this.props.user.citizanId1,
+        citizanId2: this.props.user.citizanId2,
+        citizanId3: this.props.user.citizanId3,
+        citizanId4: this.props.user.citizanId4,
+        citizanId5: this.props.user.citizanId5,
         firstName: this.props.user.firstName,
         gender: this.props.user.gender,
         lastName: this.props.user.lastName,
@@ -119,7 +163,10 @@ export class EditForm extends Component {
     request,
     backLabel,
     keyState,
-    stateValue
+    stateValue,
+    maxLength,
+    sizeWidth,
+    min
   }) => {
     const className = `inline fields ${
       meta.error && meta.touched ? 'error' : ''
@@ -137,6 +184,12 @@ export class EditForm extends Component {
             placeholder={placeholder}
             onChange={e => this.setState({ [keyState]: e.target.value })}
             value={stateValue}
+            maxLength={maxLength ? maxLength : null}
+            style={{ width: sizeWidth ? sizeWidth : '100%' }}
+            min={min}
+            onInput={
+              type === 'number' && maxLength ? this.maxLengthCheck : null
+            }
           />
         </div>
         {backLabel ? backLabel : ''}
@@ -145,20 +198,17 @@ export class EditForm extends Component {
     );
   };
 
-  renderSelectIcon = (
-    {
-      keyState,
-      input,
-      label,
-      meta,
-      option,
-      placeholder,
-      stateValue,
-      sizeWidth,
-      request
-    },
-    props
-  ) => {
+  renderSelectIcon = ({
+    keyState,
+    input,
+    label,
+    meta,
+    option,
+    placeholder,
+    stateValue,
+    sizeWidth,
+    request
+  }) => {
     const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
     return (
       <div className="inline fields" style={{ marginLeft: '10px' }}>
@@ -167,7 +217,22 @@ export class EditForm extends Component {
           <span style={{ color: 'red' }}>{request ? '*' : ''}</span>
         </label>
         <div className={className}>
-          <Dropdown props={props} />
+          <Dropdown
+            input={input}
+            option={Nationality.filter(value => value.phone !== '')
+              .sort((a, b) => a.phone - b.phone)
+              .map((value, i) => {
+                return {
+                  key: i,
+                  value: value.phone,
+                  text: (
+                    <span>
+                      <Flag name={value.icon} /> {value.phone}
+                    </span>
+                  )
+                };
+              })}
+          />
         </div>
         {this.renderError(meta)}
       </div>
@@ -233,11 +298,19 @@ export class EditForm extends Component {
       .replace('-', '')
       .replace('-', '');
     const tilte = Title[Math.floor(Math.random() * Title.length)];
-    const citizanId = faker.random.number(9999999999999).toString();
+    const citizanId1 = faker.random.number(9).toString();
+    const citizanId2 = faker.random.number(9999).toString();
+    const citizanId3 = faker.random.number(99999).toString();
+    const citizanId4 = faker.random.number(99).toString();
+    const citizanId5 = faker.random.number(9).toString();
     const salary = faker.random.number(1000000).toString();
     let dob = faker.date.past();
     this.setState({
-      citizanId: citizanId,
+      citizanId1: citizanId1,
+      citizanId2: citizanId2,
+      citizanId3: citizanId3,
+      citizanId4: citizanId4,
+      citizanId5: citizanId5,
       firstName: firstName,
       gender: gender,
       lastName: lastName,
@@ -249,7 +322,11 @@ export class EditForm extends Component {
       dob: new Date(dob)
     });
     this.props.initialize({
-      citizanId: citizanId,
+      citizanId1: citizanId1,
+      citizanId2: citizanId2,
+      citizanId3: citizanId3,
+      citizanId4: citizanId4,
+      citizanId5: citizanId5,
       firstName: firstName,
       gender: gender,
       lastName: lastName,
@@ -325,16 +402,58 @@ export class EditForm extends Component {
                 keyState="nationality"
                 stateValue={this.state.nationality}
                 label="Nationality"
-                sizeWidth="335px"
               />
             </div>
-            <div className="fields">
+            <div className="fields" ref="Progress1">
               <Field
-                name="citizanId"
+                name="citizanId1"
                 component={this.renderInput}
                 label="Citizan ID"
-                keyState="citizanId"
-                stateValue={this.state.citizanId}
+                keyState="citizanId1"
+                stateValue={this.state.citizanId1}
+                maxLength="1"
+                sizeWidth="40px"
+                type="number"
+              />
+              <Field
+                name="citizanId2"
+                component={this.renderInput}
+                label="-"
+                keyState="citizanId2"
+                stateValue={this.state.citizanId2}
+                maxLength="4"
+                sizeWidth="65px"
+                type="number"
+              />
+              <Field
+                name="citizanId3"
+                component={this.renderInput}
+                label="-"
+                keyState="citizanId3"
+                stateValue={this.state.citizanId3}
+                maxLength="5"
+                sizeWidth="70px"
+                type="number"
+              />
+              <Field
+                name="citizanId4"
+                component={this.renderInput}
+                label="-"
+                keyState="citizanId4"
+                stateValue={this.state.citizanId4}
+                maxLength="2"
+                sizeWidth="45px"
+                type="number"
+              />
+              <Field
+                name="citizanId5"
+                component={this.renderInput}
+                label="-"
+                keyState="citizanId5"
+                stateValue={this.state.citizanId5}
+                maxLength="1"
+                sizeWidth="40px"
+                type="number"
               />
             </div>
             <div className="fields">
@@ -350,7 +469,7 @@ export class EditForm extends Component {
             <div className="fields">
               <Field
                 name="phoneFront"
-                component={this.renderSelect}
+                component={this.renderSelectIcon}
                 option={Nationality.filter(value => value.phone !== '').map(
                   value => value.phone
                 )}
@@ -387,6 +506,8 @@ export class EditForm extends Component {
                 stateValue={this.state.salary}
                 request
                 backLabel="THB"
+                type="number"
+                min="1"
               />
             </div>
             <div
@@ -437,7 +558,12 @@ const validate = formValues => {
   return errors;
 };
 
+const afterSubmit = (result, dispatch) => {
+  dispatch(reset('editForm'));
+};
+
 export default reduxForm({
   form: 'editForm',
+  onSubmitSuccess: afterSubmit,
   validate
 })(EditForm);

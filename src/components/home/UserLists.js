@@ -114,6 +114,102 @@ export class UserLists extends Component {
     }
   }
 
+  renderPaginationCondition(countOfUsers, currentPage) {
+    let content1;
+    let content2;
+    let content3;
+    let content4;
+    let content5;
+    if (currentPage >= 6) {
+      content1 = (
+        <React.Fragment key="front-pagination">
+          <div
+            className="item"
+            onClick={() => this.setState({ currentPage: 1 })}
+          >
+            1
+          </div>
+          <div className="disabled item">...</div>
+        </React.Fragment>
+      );
+    }
+    if (countOfUsers >= 8) {
+      if (currentPage <= countOfUsers - 5)
+        content5 = (
+          <React.Fragment key="end-pagination">
+            <div className="disabled item">...</div>
+            <div
+              className="item"
+              onClick={() => this.setState({ currentPage: countOfUsers })}
+            >
+              {countOfUsers}
+            </div>
+          </React.Fragment>
+        );
+      else if (currentPage < 6)
+        content5 = (
+          <React.Fragment key="end-pagination">
+            <div className="disabled item">...</div>
+            <div
+              className="item"
+              onClick={() => this.setState({ currentPage: countOfUsers })}
+            >
+              {countOfUsers}
+            </div>
+          </React.Fragment>
+        );
+    }
+    if (currentPage >= 6 && currentPage <= countOfUsers - 5) {
+      content3 = Array(countOfUsers)
+        .fill(0)
+        .map((value, i) => {
+          if (i + 1 > currentPage - 3 && i + 1 < currentPage + 3)
+            return (
+              <div
+                className={`item ${currentPage === i + 1 ? 'active' : ''}`}
+                key={i}
+                onClick={() => this.setState({ currentPage: i + 1 })}
+              >
+                {i + 1}
+              </div>
+            );
+        });
+    }
+    if (currentPage < 6) {
+      content2 = Array(countOfUsers)
+        .fill(0)
+        .map((value, i) => {
+          if (i + 1 < 8)
+            return (
+              <div
+                className={`item ${currentPage === i + 1 ? 'active' : ''}`}
+                key={i}
+                onClick={() => this.setState({ currentPage: i + 1 })}
+              >
+                {i + 1}
+              </div>
+            );
+        });
+    } else if (currentPage > countOfUsers - 5) {
+      content4 = Array(countOfUsers)
+        .fill(0)
+        .map((value, i) => {
+          if (i + 1 >= currentPage - 2)
+            return (
+              <div
+                className={`item ${currentPage === i + 1 ? 'active' : ''}`}
+                key={i}
+                onClick={() => this.setState({ currentPage: i + 1 })}
+              >
+                {i + 1}
+              </div>
+            );
+        });
+    }
+    let contents = [content1, content2, content3, content4, content5];
+    return contents;
+  }
+
   renderPagination() {
     if (this.props.users) {
       const { rowPerPage, currentPage } = this.state;
@@ -127,17 +223,7 @@ export class UserLists extends Component {
           >
             <i className="left chevron icon" />
           </div>
-          {Array(countOfUsers)
-            .fill(0)
-            .map((value, i) => (
-              <div
-                className={`item ${currentPage === i + 1 ? 'active' : ''}`}
-                key={i}
-                onClick={() => this.setState({ currentPage: i + 1 })}
-              >
-                {i + 1}
-              </div>
-            ))}
+          {this.renderPaginationCondition(countOfUsers, currentPage)}
           <div
             className="icon item"
             onClick={() => this.setState({ currentPage: currentPage + 1 })}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Field, reduxForm, reset } from 'redux-form';
+import { Flag } from 'semantic-ui-react';
 import moment from 'moment';
 import faker from 'faker';
 import DatePicker from '../core/Datapicker';
@@ -73,6 +74,15 @@ export class UserForm extends Component {
     };
   }
 
+  maxLengthCheck = object => {
+    if (object.target.value.length > object.target.maxLength) {
+      object.target.value = object.target.value.slice(
+        0,
+        object.target.maxLength
+      );
+    }
+  };
+
   renderError({ error, touched }) {
     if (touched && error)
       return <div className="ui left pointing red basic label">{error}</div>;
@@ -115,7 +125,8 @@ export class UserForm extends Component {
     keyState,
     stateValue,
     maxLength,
-    sizeWidth
+    sizeWidth,
+    min
   }) => {
     const className = `inline fields ${
       meta.error && meta.touched ? 'error' : ''
@@ -135,6 +146,10 @@ export class UserForm extends Component {
             value={stateValue}
             maxLength={maxLength ? maxLength : null}
             style={{ width: sizeWidth ? sizeWidth : '100%' }}
+            min={min}
+            onInput={
+              type === 'number' && maxLength ? this.maxLengthCheck : null
+            }
           />
         </div>
         {backLabel ? backLabel : ''}
@@ -143,20 +158,17 @@ export class UserForm extends Component {
     );
   };
 
-  renderSelectIcon = (
-    {
-      keyState,
-      input,
-      label,
-      meta,
-      option,
-      placeholder,
-      stateValue,
-      sizeWidth,
-      request
-    },
-    props
-  ) => {
+  renderSelectIcon = ({
+    keyState,
+    input,
+    label,
+    meta,
+    option,
+    placeholder,
+    stateValue,
+    sizeWidth,
+    request
+  }) => {
     const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
     return (
       <div className="inline fields" style={{ marginLeft: '10px' }}>
@@ -165,7 +177,22 @@ export class UserForm extends Component {
           <span style={{ color: 'red' }}>{request ? '*' : ''}</span>
         </label>
         <div className={className}>
-          <Dropdown props={props} />
+          <Dropdown
+            input={input}
+            option={Nationality.filter(value => value.phone !== '')
+              .sort((a, b) => a.phone - b.phone)
+              .map((value, i) => {
+                return {
+                  key: i,
+                  value: value.phone,
+                  text: (
+                    <span>
+                      <Flag name={value.icon} /> {value.phone}
+                    </span>
+                  )
+                };
+              })}
+          />
         </div>
         {this.renderError(meta)}
       </div>
@@ -346,6 +373,7 @@ export class UserForm extends Component {
                 stateValue={this.state.citizanId1}
                 maxLength="1"
                 sizeWidth="40px"
+                type="number"
               />
               <Field
                 name="citizanId2"
@@ -355,6 +383,7 @@ export class UserForm extends Component {
                 stateValue={this.state.citizanId2}
                 maxLength="4"
                 sizeWidth="65px"
+                type="number"
               />
               <Field
                 name="citizanId3"
@@ -364,6 +393,7 @@ export class UserForm extends Component {
                 stateValue={this.state.citizanId3}
                 maxLength="5"
                 sizeWidth="70px"
+                type="number"
               />
               <Field
                 name="citizanId4"
@@ -373,6 +403,7 @@ export class UserForm extends Component {
                 stateValue={this.state.citizanId4}
                 maxLength="2"
                 sizeWidth="45px"
+                type="number"
               />
               <Field
                 name="citizanId5"
@@ -382,6 +413,7 @@ export class UserForm extends Component {
                 stateValue={this.state.citizanId5}
                 maxLength="1"
                 sizeWidth="40px"
+                type="number"
               />
             </div>
             <div className="fields">
@@ -397,7 +429,7 @@ export class UserForm extends Component {
             <div className="fields">
               <Field
                 name="phoneFront"
-                component={this.renderSelect}
+                component={this.renderSelectIcon}
                 option={Nationality.filter(value => value.phone !== '').map(
                   value => value.phone
                 )}
@@ -434,6 +466,8 @@ export class UserForm extends Component {
                 stateValue={this.state.salary}
                 request
                 backLabel="THB"
+                type="number"
+                min="1"
               />
             </div>
             <div
