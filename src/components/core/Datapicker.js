@@ -79,6 +79,7 @@ export default class renderDatePicker extends React.Component {
             dropdownMode="select"
             timeIntervals={1}
             dateFormat="dd/MM/yyyy"
+            maxDate={new Date()}
           />
         </div>
         {this.renderError(meta)}
